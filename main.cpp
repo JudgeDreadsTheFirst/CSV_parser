@@ -5,7 +5,12 @@
 #include <string>
 
 int main(int argc, char *argv[]){
-	std::string str = argv[1];
+    std::string str;
+    if(argc==1){
+        str = "file.csv";
+    }else{
+	    str = argv[1];
+    }
 	char delim = ',';
     
 	Table wrk;
