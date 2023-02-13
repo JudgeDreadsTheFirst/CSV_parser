@@ -12,7 +12,7 @@
 
 
 // TODO: унифицировать итерирование в циклах
-// TODO: заменить где нужно runtime_error на более подходящий тип ошибки
+// TcODO: заменить где нужно runtime_error на более подходящий тип ошибки
 // TODO: добавить в функции логирование ошибок(добавить передачу имени файла лога в формате filename_log.txt)
 // (по идее библиотеки для логирования есть в boost но его нельзя взять)
 
@@ -34,9 +34,13 @@ Table readCsvData(std::string inpf, char delimeter){
 	catch (std::runtime_error e) {
 		std::cerr << e.what() << std::endl;
 	}
-
+    
     int column_size = column_names.size();
-
+    for(auto i = 1;i!=column_size;i++){
+        if(std::count(column_names.begin(),column_names.end(),column_names[i])!=1){
+            throw std::runtime_error("[ERROR]:duplicate names in the head line");
+        }
+    }
 	std::vector<std::string> line_nums;
 	std::map<std::string, std::string> vals;
 	while (!file.eof()) {
@@ -61,12 +65,17 @@ Table readCsvData(std::string inpf, char delimeter){
 		}
 
 		int line_size = line.size();
-
+        
 		for (auto i = 1; i != std::min(column_size, line_size); i++) {
 			vals[column_names[i] + line[0]] = line[i];
 		}
 		line_nums.push_back(line[0]);
 	}
+    for(auto i = 1;i!=line_nums.size();i++){
+        if(std::count(line_nums.begin(),line_nums.end(),line_nums[i])!=1){
+            throw std::runtime_error("[ERROR]:duplicate numbers at the start of the lines");
+        }
+    }
 	file.close();
 	Table read_res(vals, column_names, line_nums);
 	return read_res;
